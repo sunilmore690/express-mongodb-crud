@@ -1,0 +1,36 @@
+include plain.html
+extends layout
+#posts
+
+
+     each article in posts
+      div.article
+        div.created_at= article.postid
+        div.postdata
+            a(href="/blog/"+article._id)!= article.postdata
+        
+
+block content
+  h1= title
+  p Welcome to #{title}
+  form(name="FORM", action="/insertpost", method="post" class="form")
+  key EnterYourPost
+    input(type="text", name="psotdata")
+
+  
+  input(type="submit", value="Post")
+  br
+  a(href="/insertpost?postdata=hi") Insert
+  br
+  br
+  br
+  div#things
+  span#rice Chicken Fried
+  p.beans{ :food => "true" } The magical fruit
+  h1.class.otherclass#id La La La
+br
+div#login
+  
+- for(i <- 1 to 6)
+  p= i
+p See, I can count!

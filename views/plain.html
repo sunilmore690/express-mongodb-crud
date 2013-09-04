@@ -1,0 +1,123 @@
+<html>
+<title>Welcom To prodous</title>
+<link rel="stylesheet" href="/stylesheets/style.css">
+<script>
+function validateform(form)
+{
+   var postdata=form.postdata.value;
+   if(postdata=="")
+   {
+   	form.postdata.style.borderColor="red"
+   	form.postdata.style.borderWidth="medium"
+   	
+   	return false;
+   }
+   return true;
+}
+function showorignal(posttext)
+{
+posttext.style.borderColor="black";
+   	posttext.style.borderWidth="1";
+
+   	
+
+}
+function deletepost(p)
+{
+	//alert(p);
+$.post("/deletepost/"+p,
+            function(data) {
+                //$('#stage').html(data);
+                alert("delete the record"+data);
+                $("#"+p).slideUp("slow")
+             });	
+}
+function showb(val)
+{
+	//alert("onmouseover"+val);
+
+	$("#b"+val).fadeIn();
+}
+function hideb(val)
+{
+$("#b"+val).fadeOut();
+
+}
+
+
+
+</script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>  
+<body>
+<center>
+<h1><font color="blue" >Welcome To Prodonus</font>
+<div id=postform>
+<form method='post' action="/insertpost" name="post" onsubmit="return validateform(this)" >
+<textarea rows=4 cols="50" name="postdata" onmouseout="showorignal(this)"  onclick="showorignal(this)"></textarea>
+<br>
+<input type="submit" value="Post" class=button>&nbsp;
+
+</form>
+</div>
+<div id=postdisp></div>
+<script type="text/javascript">  
+            var content_area = $("#postdisp");  
+            function load_content() {  
+                   
+                   
+               $.getJSON("/getposts", function(data) {  
+               
+                 //content_area.html(data);  
+                 // data='[{"postid":"1","postdata":"whats up"},{"postid":"2","postdata":"nice"}]';
+                   var json_obj = $.parseJSON(String(data));
+                  // document.write(json_obj.postid);
+                    var output="<table border=1 width=500>"
+                    //display posts and comments and results
+                     for (var i=0;i<json_obj.length;i++)
+						{
+            output+="<tr><td>"+json_obj[i].postid+" </td><td>"+json_obj[i].userid+"</td><td> "+json_obj[i].postdata+"</td></tr>";
+            output+="<tr><td></td><td></td><td><table name=comment width= 300 border=1>";
+
+            if(String(json_obj[i].comments)=='undefined')
+            {}
+            else{
+  for(var j=0;j<json_obj[i].comments.length;j++)
+  {           
+                
+    output+="<tr><td>"+json_obj[i].comments[j].userid+" </td><td> "+json_obj[i].comments[j].text+"</td></tr>";
+         output+="<tr><td></td><td><table name=reply border=1 width=200>";
+                  output+="<tr><td></td><td></td><td><table name=comment width= 300 border=1>";
+                //  alert("comment"+String(json_obj[i].comments[j].reply));
+            if(String(json_obj[i].comments[j].reply)=='undefined')
+            {}
+            else{
+   output+="<tr><td></td><td></td><td><table name=comment width= 300 border=1>";
+            for(var k=0;k<json_obj[i].comments[j].reply.length;k++)
+            {
+
+             output+="<tr><td>"+json_obj[i].comments[j].reply[k].userid+"</td><td> "+json_obj[i].comments[j].reply[k].replytext+"</td></tr>";  
+
+              
+
+            }
+
+  }
+  output+="</table></td></tr>";
+  }
+output+="</table></td></tr>";
+							/*output+="<li onmouseout='hideb("+json_obj[i].postid+")' onmouseover='showb("+json_obj[i].postid+")' id="+json_obj[i].postid+" >" + json_obj[i].postid + ", " + json_obj[i].postdata + "    <input style='display:none' id=b"+json_obj[i].postid+" type=button onclick='deletepost("+json_obj[i].postid+");' value='X'> </li>";
+							*/
+						}}
+						output+="</table>";
+                  content_area.html(output);
+                     
+                   // load_content();  
+                });
+            }  
+            load_content();  
+        </script>  
+
+
+</center>
+</body>
+</html>
